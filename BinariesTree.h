@@ -18,6 +18,6 @@ int btn_level_t(BT* root, t_elem_BT value, int level);
 int btn_level(BT* root, t_elem_BT data);
 int btn_max_level(BT* root, int level);
 int btn_max_level_2(BT* root, int level);
-int is_AVL(BT* node);
+int isAVL(BT* node);
 
 #endif

@@ -269,6 +269,19 @@ void add_value_bt(BT**root,t_elem_BT value)
         }
 }
 
+int profundidad(BT* root,int count)
+{
+    int result=0;
+    if(root!=NULL)
+    {
+        result=count;
+        int temp=profundidad(root->left,count+1);
+        temp=profundidad(root->right,count+1);
+        result=temp;
+    }
+
+    return result;
+}
 
 int balanceFactor(BT *node)
 {
