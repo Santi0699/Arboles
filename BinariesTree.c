@@ -200,3 +200,21 @@ int btn_max_level_2(BT* root, int level)
 
     return r;
 }
+
+int is_AVL(BT* node)
+{
+    int result= 1;
+
+    if(node!=NULL)
+    {
+        int fb=balance_factor(node);
+        if(abs(fb)<2)
+        {
+            result=is_AVL(node->left)&&is_AVL(node->right);
+        }else
+            {
+                result=0;
+            }
+    }
+    return result;
+}
