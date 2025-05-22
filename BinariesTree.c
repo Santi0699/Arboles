@@ -416,3 +416,34 @@ int removeAVL (BT **node, int value){
             };
 }
     
+void print_lvl(BT* root, int lvl)
+{
+    if (root==NULL) return;
+    if(lvl<1)return;
+
+    if(lvl==1)
+    {
+        printf("%d",root->data);
+    }else
+        {
+            print_lvl(root->left,lvl-1);
+            print_lvl(root->right,lvl-1);
+        }
+}
+
+void create_list_out_of_range(BT* root, node** head, int low_range, int high_range)
+{
+    if (root==NULL)return;
+
+    create_list_out_of_range(root->right,head,low_range,high_range);
+    if(root->data > high_range)
+    {
+        add_list_first(&(*head),root->data);
+    }else if(root->data < low_range)
+        {
+            add_list_first(&(*head),root->data);
+        }
+    create_list_out_of_range(root->left,head,low_range,high_range);
+
+
+}
