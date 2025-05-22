@@ -431,11 +431,11 @@ void print_lvl(BT* root, int lvl)
         }
 }
 
-void create_list_out_of_range(BT* root, node** head, int low_range, int high_range)
+void create_list_out_of_range_2(BT* root, node** head, int low_range, int high_range)
 {
     if (root==NULL)return;
 
-    create_list_out_of_range(root->right,head,low_range,high_range);
+    create_list_out_of_range_2(root->right,head,low_range,high_range);
     if(root->data > high_range)
     {
         add_list_first(&(*head),root->data);
@@ -443,7 +443,36 @@ void create_list_out_of_range(BT* root, node** head, int low_range, int high_ran
         {
             add_list_first(&(*head),root->data);
         }
-    create_list_out_of_range(root->left,head,low_range,high_range);
+    create_list_out_of_range_2(root->left,head,low_range,high_range);
 
 
+}
+
+void BT_add_max(node** list, BT* root,int low_range)
+{
+    if(!root) return;
+    if(root->data > low_range){
+        BT_add_max(list,root->right,low_range);
+        add_list(list, root->data);
+        BT_add_max(list,root->left,low_range);
+    }else{
+        BT_add_max(list,root->left,low_range);
+    }
+}
+
+void BT_add_min(node** list, BT* root,int high_range)
+{
+    if(!root) return;
+    if(root->data < high_range){
+        BT_add_max(list,root->left,high_range);
+        add_list(list, root->data);
+        BT_add_max(list,root->right,high_range);
+    }else{
+        BT_add_max(list,root->right,high_range);
+    }
+}
+
+void create_list_out_of_range(BT* root, node** head, int low_range, int high_range)
+{
+    
 }
