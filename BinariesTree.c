@@ -201,20 +201,205 @@ int btn_max_level_2(BT* root, int level)
     return r;
 }
 
-int is_AVL(BT* node)
+int is_a_leaf(BT* root)
 {
-    int result= 1;
-
-    if(node!=NULL)
+    int r=0;
+    if(root != NULL)
     {
-        int fb=balance_factor(node);
-        if(abs(fb)<2)
+        if(root->left == NULL && root->right==NULL)
         {
-            result=is_AVL(node->left)&&is_AVL(node->right);
-        }else
-            {
-                result=0;
-            }
+            r=1;
+        }
+    }
+    return r;
+}
+
+int count_nodes_t(BT* root)
+{
+    return (root!=NULL)? 1+count_nodes_t(root->left)+count_nodes_t(root->right):0;
+}
+
+void add_node_bt(BT**root,BT* new_node)
+{
+        if((*root)->left==NULL)
+        {
+            (*root)->left=new_node;
+            return;
+        }
+        if((*root)->right==NULL)
+        {
+            (*root)->right=new_node;
+            return;
+        }
+
+        int count_left=count_nodes_t((*root)->left);
+        int count_right=count_nodes_t((*root)->right);
+    
+        if(count_left<=count_right)
+        {
+            add_node_bt(&(*root)->left,new_node);    
+        }else{
+            add_node_bt(&(*root)->right,new_node);
+        }
+}
+
+void add_value_bt(BT**root,t_elem_BT value)
+{
+        BT* new_node=new_node_BT(value);
+        if((*root)->left==NULL)
+        {
+            (*root)->left=new_node;
+            return;
+        }
+        if((*root)->right==NULL)
+        {
+            (*root)->right=new_node;
+            return;
+        }
+
+        
+        int count_left=count_nodes_t((*root)->left);
+        int count_right=count_nodes_t((*root)->right);
+    
+        if(count_left<=count_right)
+        {
+            add_value_bt(&(*root)->left,value);    
+        }else{
+            add_value_bt(&(*root)->right,value);
+        }
+}
+
+
+int balanceFactor(BT *node)
+{
+    int result = 0;
+    if (node != NULL) {
+        result = height(node->left) - height(node->right); 
     }
     return result;
 }
+
+
+int isAVL(BT *node)
+{
+    if (node == NULL) return 1;
+    int result = 0; 
+
+    if (abs(balanceFactor(node))<2) {
+        if (isAVL(node->left)){
+            result = isAVL(node->right);
+        } 
+    }
+
+    return result;    
+}
+
+int leftRotation (BT **node){
+    if (node == NULL) return 0;
+    if (*node == NULL) return 0;
+    if ((*node)->right == NULL) return 0;
+    
+    BT *aux = (*node)->right;
+    (*node)->right = aux->left;
+    aux->left = *node; 
+    *node = aux;
+    
+    return 1; 
+}
+
+int rightRotation (BT **node){
+    if (node == NULL) return 0;
+    if (*node == NULL) return 0;
+    if ((*node)->left == NULL) return 0;    
+
+    BT *aux = (*node)->left;
+    (*node)->left = aux->right;
+    aux->right = *node; 
+    *node = aux;
+    
+    return 1; 
+}
+
+int balance (BT **node){
+    if (node == NULL) return 0;
+    if (*node == NULL) return 0; 
+
+    int bf = balanceFactor(*node); 
+
+    if (bf <= -2) {
+        if (balanceFactor((*node)->right) >0) {
+            rightRotation(&(*node)->right);
+        }
+        leftRotation(node); 
+
+    } else if (bf >= 2) {
+        if (balanceFactor((*node)->left) <0) {
+            leftRotation(&(*node)->left);
+        }
+        rightRotation(node); 
+    }
+
+    if (abs(balanceFactor(*node)) > 1){
+        balance (node); 
+    }
+    
+    return 1;
+}
+
+int insertNode(BT **node, BT *new) {
+    if (node == NULL) return 0;
+    if (new == NULL) return 1;
+
+    if ((*node) == NULL) {
+        *node = new;
+        return 1;
+    } else {
+        if ((*node)->data > new->data) {            
+            return insertNode(&(*node)->left, new);
+
+        } else if ((*node)->data < new->data) {            
+            return insertNode(&(*node)->right, new);
+
+        } else {
+            return 0;
+        }
+    }
+}
+
+int insertAVL (BT **node, int value) {
+    
+    BT *new = create(value);
+          if (!insertNode(node, new)) {            
+              free(new); //Duplicado
+          } else {
+              balanceTree (node); 
+          };
+  
+  }
+  
+
+BT *removeNode(BT **node) {
+    if (!node) return NULL;
+    if (!(*node)) return NULL;
+
+    BT *aux = *node;
+
+    insertNode(&(aux->right), (aux->left));
+    *node = aux->right;
+    aux->left = NULL;
+    aux->right = NULL;
+
+    return aux;
+}
+
+int removeAVL (BT **node, int value){ 
+
+    BT *deleted = NULL;
+    BT **toDel = NULL; 
+          toDel = findPtr(value, node);         
+          deleted = removeNode(toDel);
+          if (deleted != NULL) {            
+                balanceTree (node); 
+            };
+}
+    
