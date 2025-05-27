@@ -1,12 +1,92 @@
 #include "BinariesTree.h"
 
-typedef struct _BT
+//1.a Crear un nodo de un BT en base a un valor BTREE_ELEM
+btn* nbt_newnode(BTREE_ELEM value)
 {
-    t_elem_BT data;
-    struct _BT* left;
-    struct _BT* right;
-}BT;
+    btn* new = (btn*)malloc(sizeof(btn));
 
+    if(new!=NULL)
+    {
+        new->data=value;
+        new->left=NULL;
+        new->right=NULL;
+    }
+
+    return new;
+
+}
+//b. Eliminar un nodo, si tiene hijos elimina sus hijos también.
+void nbt_deletenode(btn**node)
+{
+    if((*node)!=NULL)
+    {
+        (*node)->left=NULL;
+        (*node)->right=NULL;
+    }
+    free(node);
+}
+
+/*c.Buscar un nodo con un determinado elemento y devolver su referencia. Se busca el nodo en
+pre-order (debe recorrer todo el árbol cuando no hay un criterio de ordenamiento). Debe
+devolver la referencia a la ubicación del puntero al nodo. Si no existe, devuelve NULL*/
+
+/*Siempre que tenga que buscar algo y lo haga recursivo en arboles tengo que primero recorrer toda una rama,
+si por ese lado no se encuentra voy por el otro lado. pero siempre verificando de ante mano si el valor es el buscado,
+el ejercicio cambiaria si se me pide buscar si el elemento esta en una hoja, para eso lo tendria que hacer una funcion
+que indentifique si el nodo es una hoja o no*/
+
+btn** btn_search(btn** root, BTREE_ELEM value)
+{   
+    btn** result=NULL;
+
+    if(*root!=NULL)
+    {
+        if((*root)->data==value)
+        {
+            result=&(*root);
+        }else{
+            result = btn_search(&(*root)->left, value);
+            // Si no lo encontró, buscar en el subárbol derecho
+            if (result == NULL)
+            {
+                result = btn_search(&(*root)->right, value);
+            }
+        }
+        
+    }
+
+    return result;
+}
+
+/*d. Hacer una función que reciba un nodo y devuelva 1 si es hoja y 0 si no lo es. */
+int btn_isleaf(btn* node)
+{
+    int res=0;
+    if(node!=NULL)
+    {
+        if(node->left==NULL && node->right==NULL)
+        {
+            res=1;
+        }
+    }
+    return res;
+}
+
+/*e. Contar la cantidad de nodos*/
+
+int btn_count_nodes(btn* root)
+{
+    int result=0;
+    if(root!=NULL)
+    {
+        result=1+btn_count_nodes(root->left)+btn_count_nodes(root->right);
+    }
+    
+    return result;
+}
+
+
+/*
 BT* new_node_BT(t_elem_BT value)
 {
     BT* result= (BT*)malloc(sizeof(BT));
@@ -476,3 +556,4 @@ void create_list_out_of_range(BT* root, node** head, int low_range, int high_ran
 {
     
 }
+*/
