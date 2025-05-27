@@ -1,7 +1,7 @@
 #include "BinariesTree.h"
 
 //1.a Crear un nodo de un BT en base a un valor BTREE_ELEM
-btn* nbt_newnode(BTREE_ELEM value)
+btn* btn_newnode(BTREE_ELEM value)
 {
     btn* new = (btn*)malloc(sizeof(btn));
 
@@ -16,7 +16,7 @@ btn* nbt_newnode(BTREE_ELEM value)
 
 }
 //b. Eliminar un nodo, si tiene hijos elimina sus hijos también.
-void nbt_deletenode(btn**node)
+void btn_deletenode(btn**node)
 {
     if((*node)!=NULL)
     {
@@ -35,7 +35,7 @@ si por ese lado no se encuentra voy por el otro lado. pero siempre verificando d
 el ejercicio cambiaria si se me pide buscar si el elemento esta en una hoja, para eso lo tendria que hacer una funcion
 que indentifique si el nodo es una hoja o no*/
 
-btn** btn_search(btn** root, BTREE_ELEM value)
+btn** btn_search_value(btn** root, BTREE_ELEM value)
 {   
     btn** result=NULL;
 
@@ -45,11 +45,34 @@ btn** btn_search(btn** root, BTREE_ELEM value)
         {
             result=&(*root);
         }else{
-            result = btn_search(&(*root)->left, value);
+            result = btn_search_value(&(*root)->left, value);
             // Si no lo encontró, buscar en el subárbol derecho
             if (result == NULL)
             {
-                result = btn_search(&(*root)->right, value);
+                result = btn_search_value(&(*root)->right, value);
+            }
+        }
+        
+    }
+
+    return result;
+}
+
+btn** btn_search_node(btn** root, btn* value)
+{   
+    btn** result=NULL;
+
+    if(*root!=NULL)
+    {
+        if((*root)==value)
+        {
+            result=&(*root);
+        }else{
+            result = btn_search_node(&(*root)->left, value);
+            // Si no lo encontró, buscar en el subárbol derecho
+            if (result == NULL)
+            {
+                result = btn_search_node(&(*root)->right, value);
             }
         }
         
@@ -85,6 +108,209 @@ int btn_count_nodes(btn* root)
     return result;
 }
 
+/*Agrega un nodo en un árbol binario con el siguiente criterio:
+Si el subárbol es nulo se agrega ahí,
+Si no es NULL lo agrega en el hijo con menor cantidad de nodos,
+Si sus hijos tienen la misma cantidad de nodos lo agrega a la izquierda.
+*/
+
+void add_node_bt(btn**root,btn* new_node)
+{
+        if((*root)->left==NULL)
+        {
+            (*root)->left=new_node;
+            return;
+        }
+        if((*root)->right==NULL)
+        {
+            (*root)->right=new_node;
+            return;
+        }
+
+        int count_left=btn_count_nodes((*root)->left);
+        int count_right=btn_count_nodes((*root)->right);
+    
+        if(count_left<=count_right)
+        {
+            add_node_bt(&(*root)->left,new_node);    
+        }else{
+            add_node_bt(&(*root)->right,new_node);
+        }
+}
+
+/*g. Agregar un dato a un árbol con el mismo criterio.*/
+void add_value_bt(btn**root, BTREE_ELEM value)
+{
+    btn* new=btn_newnode(value);
+    add_node_bt(root,new);
+}
+
+/*h. Devolver la profundidad de un nodo. La profundidad de un nodo es 1 más la profundidad de su padre. 
+Considerar 0 (cero) la profundidad de la raíz.*/
+
+int btn_profundidad(btn*root,BTREE_ELEM destiny, int count)
+{
+    if(root==NULL)return -1;
+
+    if(root->data==destiny)
+    {
+        return count;
+    }
+
+    int left=btn_profundidad(root->left,destiny,count+1);
+    if(left==-1)
+    {
+        return left;
+    }
+
+    return btn_profundidad(root->right, destiny, count+1);
+}
+
+/*i.Devolver la altura de un BTN. La altura es la distancia de la hoja más profunda. 
+Cuando el nodo es NULL devuelve -1, la altura de las hojas es 0.*/
+
+int btn_altura(btn* root)
+{
+    if(root==NULL)return -1;
+
+    if(btn_isleaf(root))return 0;
+
+    int izquierda=btn_altura(root->left);
+    int derecha=btn_altura(root->right);
+    return 1+((izquierda > derecha)? izquierda:derecha);
+}
+
+/*Armar una función para cada tipo de recorrido del árbol (Inorder, postorder, preorder), 
+asumiendo que el elemento del árbol es un puntero a string. */
+
+/*2.a Agrega un nodo (btn*) a un árbol binario de búsqueda (BST), de modo que no acepte valores repetidos. 
+Utilizar una función cmp pasada como parámetro que permita comparar el valor de dos BTREE_ELEM. 
+En el main agregar varios valores e imprimir el árbol.*/
+
+int cmp_btn(BTREE_ELEM v1, BTREE_ELEM v2)
+{
+    int res=v1-v2;
+    return res;
+}
+
+void bst_add_node(btn**root,btn* node,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+    if(*root==NULL)
+    {
+        (*root)=node;
+        return;
+    } 
+    if(cmp_btn((*root)->data,node->data)==0)return;
+    if(cmp_btn((*root)->data,node->data)>0 && (*root)->left==NULL)
+    {
+        (*root)->left=node;
+        return;
+    }else if(cmp_btn((*root)->data,node->data)<0 && (*root)->right==NULL)
+    {
+        (*root)->right=node;
+        return;
+    }
+    
+    if(cmp_btn((*root)->data,node->data)>0)
+    {
+        bst_add_node(&(*root)->left,node,cmp_btn);
+    }else if(cmp_btn((*root)->data,node->data)<0)
+        {
+            bst_add_node(&(*root)->right,node,cmp_btn);
+        }
+
+}
+
+/*b. Verificar si un árbol binario (BT) es un árbol binario de búsqueda (BST). */
+int is_bst(btn* root, int inf_limit, int high_limit)
+{
+    int result=1;
+    if(root!=NULL && result==1)
+    {
+        if(root->data > inf_limit && root->data < high_limit)
+        {
+            result=is_bst(root->left,inf_limit,root->data)&&is_bst(root->right,root->data,high_limit);
+        }else{
+            result=0;
+        }
+        
+    }
+    return result;
+}
+
+/*c. Obtener el puntero que contiene el puntero al nodo con el valor mínimo de un BST. 
+¿Es necesario enviar una función de comparación? ¿Por qué?*/
+btn** bst_getmin_node(btn**root)
+{
+    if((*root)==NULL)return NULL;
+    if((*root)->left==NULL)return root;
+
+    return bst_getmin_node(&(*root)->left);
+}
+
+/*d. Obtener el puntero que contiene el puntero al nodo con el valor máximo de un BST.*/
+btn** bst_getmax_node(btn**root)
+{
+    if((*root)==NULL)return NULL;
+    if((*root)->right==NULL)return root;
+
+    return bst_getmax_node(&(*root)->right);
+}
+
+/*e. Obtener el puntero del puntero al nodo con el valor solicitado de un BST. 
+Debe utilizar una función de comparación pasada por parámetro. Resolver en forma iterativa y recursiva.*/
+
+btn** bst_searchvalue_interative(btn**root,BTREE_ELEM value)
+{
+    btn** node= root;
+    while(*node!=NULL && (*node)->data!=value)
+    {
+        if((*node)->left!=NULL && value < (*node)->data)
+        {
+            node=&(*node)->left;
+        }else if((*node)->right!=NULL && value > (*node)->data)
+        {
+            node=&(*node)->right;
+        }
+    }
+
+    return node;
+}
+
+btn** bst_searchvalue_recursive(btn**root,BTREE_ELEM value)
+{
+    if((*root)==NULL) return NULL;
+    if((*root)->data==value)return root;
+    btn** node= root;
+    
+    btn** result=NULL;
+    if(value<(*node)->data)
+    {
+        result=bst_searchvalue_recursive(&(*root)->left,value);
+    }else{
+        result=bst_searchvalue_recursive(&(*root)->right,value);
+    }
+
+    return result;
+}
+
+/*f. Hacer una función que devuelva 1 si un valor se encuentra en el BST, o 0 en otro caso.*/
+
+int bst_check_value(btn*root,BTREE_ELEM value)
+{
+    if(root==NULL) return -1;
+    if(root->data==value)return 1;
+    
+    int result=0;
+    if(value<root->data)
+    {
+        result=bst_searchvalue_recursive(root->left,value);
+    }else{
+        result=bst_searchvalue_recursive(root->right,value);
+    }
+
+    return result;
+}
 
 /*
 BT* new_node_BT(t_elem_BT value)

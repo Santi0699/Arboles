@@ -12,11 +12,24 @@ typedef struct _btn
     struct _btn* right;
 }btn;
 
-btn* nbt_newnode(BTREE_ELEM value);
-void nbt_deletenode(btn**node);
-btn** btn_search(btn** root, BTREE_ELEM value);
+btn* btn_newnode(BTREE_ELEM value);
+void btn_deletenode(btn**node);
+btn** btn_search_value(btn** root, BTREE_ELEM value);
+btn** btn_search_node(btn** root, btn* value);
 int btn_isleaf(btn* node);
 int btn_count_nodes(btn* root);
+void add_node_bt(btn**root,btn* new_node);
+void add_value_bt(btn**root, BTREE_ELEM value);
+int btn_profundidad(btn*root,BTREE_ELEM destiny, int count);
+int btn_altura(btn* root);
+int cmp_btn(BTREE_ELEM v1, BTREE_ELEM v2);
+void bst_add_node(btn**root,btn* node,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
+int is_bst(btn* root, int inf_limit, int high_limit);
+btn** bst_getmin_node(btn**root);
+btn** bst_getmax_node(btn**root);
+btn** bst_searchvalue_interative(btn**root,BTREE_ELEM value);
+btn** bst_searchvalue_recursive(btn**root,BTREE_ELEM value);
+int bst_check_value(btn*root,BTREE_ELEM value);
 
 /*
 BT* new_node_BT(t_elem_BT value);
