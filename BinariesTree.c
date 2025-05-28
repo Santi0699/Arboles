@@ -312,6 +312,32 @@ int bst_check_value(btn*root,BTREE_ELEM value)
     return result;
 }
 
+/*g. Quitar un nodo de un BST, reemplazando el nodo por su rama Derecha y agregando la rama 
+Izquierda a la rama derecha.*/
+void bst_remove_node(btn** root, BTREE_ELEM value)
+{
+    btn** aux1=bst_searchvalue_recursive(root,value);
+
+    btn* aux2= *aux1;
+    btn* aux_L= aux2->left;
+    btn* aux_R= aux2->right;
+
+    if(aux_R==NULL)
+    {
+        *aux1=aux_L;
+    }else{
+       btn* min=aux_R;
+       while(min->left!=NULL)
+       {
+            min=min->left;
+       }
+       min->left=aux_L;
+       *aux1=aux_R;
+    }
+    aux2->left = NULL;
+    aux2->right = NULL;
+
+}
 /*
 BT* new_node_BT(t_elem_BT value)
 {
