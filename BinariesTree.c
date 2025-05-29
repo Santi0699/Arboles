@@ -312,6 +312,57 @@ int bst_check_value(btn*root,BTREE_ELEM value)
     return result;
 }
 
+/*Funciones de rotar nodos*/
+int height(btn *node){
+    int result = -1; 
+    if (node != NULL) {
+        result = max(height(node->left), height(node->right)) +1; 
+    }
+    return result;    
+}
+
+int balanceFactor(btn *node){
+    int result = 0;
+    if (node != NULL) {
+        result = height(node->left) - height(node->right); 
+    }
+    return result;
+}
+
+int isAVL(btn *node){
+    if (node == NULL) return 1;
+    int result = 0; 
+
+    if (abs(balanceFactor(node))<2) {
+        if (isAVL(node->left)){
+            result = isAVL(node->right);
+        } 
+    }
+
+    return result;    
+}
+
+void bst_left_rotation(btn**root)
+{
+    btn* aux= (*root);
+    btn* aux2= (aux)->right;
+    (*root)=aux2;
+    aux->right=aux2->left;
+    (*root)->left=aux;
+
+}
+
+void bst_right_rotation(btn**root)
+{
+    btn* aux= (*root);
+    btn* aux2= (aux)->right;
+    (*root)=aux2;
+    aux->right=aux2->left;
+    (*root)->left=aux;
+
+}
+
+
 /*g. Quitar un nodo de un BST, reemplazando el nodo por su rama Derecha y agregando la rama 
 Izquierda a la rama derecha.*/
 void bst_remove_node(btn** root, BTREE_ELEM value)
@@ -338,6 +389,8 @@ void bst_remove_node(btn** root, BTREE_ELEM value)
     aux2->right = NULL;
 
 }
+
+
 /*
 BT* new_node_BT(t_elem_BT value)
 {
