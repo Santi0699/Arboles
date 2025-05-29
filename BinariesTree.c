@@ -257,6 +257,7 @@ btn** bst_getmax_node(btn**root)
     return bst_getmax_node(&(*root)->right);
 }
 
+
 /*e. Obtener el puntero del puntero al nodo con el valor solicitado de un BST. 
 Debe utilizar una función de comparación pasada por parámetro. Resolver en forma iterativa y recursiva.*/
 
@@ -304,9 +305,18 @@ int bst_check_value(btn*root,BTREE_ELEM value)
     int result=0;
     if(value<root->data)
     {
-        result=bst_searchvalue_recursive(root->left,value);
+        btn**temp=bst_searchvalue_recursive(&(root)->left,value);
+        if((*temp)->data==value)
+        {
+            result=1;
+        }
     }else{
-        result=bst_searchvalue_recursive(root->right,value);
+        btn**temp2= bst_searchvalue_recursive(&(root)->right,value);
+        if((*temp2)->data==value)
+        {
+            result=1;
+        }
+        
     }
 
     return result;
@@ -316,9 +326,14 @@ int bst_check_value(btn*root,BTREE_ELEM value)
 int height(btn *node){
     int result = -1; 
     if (node != NULL) {
-        result = max(height(node->left), height(node->right)) +1; 
+        result = maxi(height(node->left), height(node->right)) +1; 
     }
     return result;    
+}
+
+int maxi (BTREE_ELEM a, BTREE_ELEM b)
+{
+    return (a>b)? a:b;
 }
 
 int balanceFactor(btn *node){
@@ -390,6 +405,142 @@ void bst_remove_node(btn** root, BTREE_ELEM value)
 
 }
 
+/*h. Remover un nodo de un BST, sustituyéndolo por el nodo de mayor valor de su subárbol izquierdo 
+o por el de menor valor de su subárbol derecho.*/
+
+void change_father_with_son(btn**root, btn*value)
+{
+
+}
+
+void bst_remove_node2(btn** root, BTREE_ELEM value,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{   if(!root)
+    {
+        btn** delete=bst_searchvalue_recursive(root,value);
+        btn*temp= (*delete);
+        if((*delete)->left!=NULL)
+        {
+            btn** maxL=bst_getmax_node(&(*delete)->left);
+            *delete=*maxL;
+            maxL=NULL;
+            bst_add_node(delete,temp->left,cmp_btn);
+            temp->left=NULL;
+            if(temp->right!=NULL){
+                bst_add_node(delete,temp->right,cmp_btn);
+                temp->right=NULL;
+            }
+        }else
+            {
+               btn** minR=bst_getmin_node(&(*delete)->right);
+                *delete=*minR;
+                minR=NULL;
+                bst_add_node(delete,temp->right,cmp_btn);
+                temp->right=NULL;
+                if(temp->left!=NULL){
+                    bst_add_node(delete,temp->left,cmp_btn);
+                    temp->left=NULL;
+                }
+            }
+    }
+
+}
+
+/*i.Remover un nodo de un BST, sustituyéndolo el nodo por:
+1.El máximo de su rama izquierda, si la rama izquierda es igual o más alta que la derecha.
+2.el mínimo de su rama derecha, si la rama derecha es más alta que la izquierda.
+*/
+void bst_remove_node3(btn** root, BTREE_ELEM value,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+    if((*root)!=NULL)
+    {
+        btn** delete=bst_searchvalue_recursive(root,value);
+        btn* temp= (*delete);
+        if(!(*delete)){
+            if(temp->left!=NULL && height(temp->left)>=height(temp->right))
+            {
+                btn** maxL=bst_getmax_node(&(*delete)->left);
+                *delete=*maxL;
+                maxL=NULL;
+                bst_add_node(delete,temp->left,cmp_btn);
+                temp->left=NULL;
+                if(temp->right!=NULL){
+                    bst_add_node(delete,temp->right,cmp_btn);
+                    temp->right=NULL;
+                }  
+            }
+        }else if (temp->right!=NULL && height(temp->left)<height(temp->right))
+            {
+                btn** minR=bst_getmin_node(&(*delete)->right);
+                *delete=*minR;
+                minR=NULL;
+                bst_add_node(delete,temp->right,cmp_btn);
+                temp->right=NULL;
+                if(temp->left!=NULL){
+                    bst_add_node(delete,temp->left,cmp_btn);
+                    temp->left=NULL;
+                }
+            }   
+    }
+}
+
+/*3. Dado un árbol binario con valores enteros, devolver la suma de todos los nodos.*/
+
+int btn_sum_elem(btn*root)
+{
+    int sum=0;
+    if(root!=NULL)
+    {
+        sum=root->data+btn_sum_elem(root->left)+btn_sum_elem(root->right);
+    }
+    return sum;
+}
+
+/*4. Dado un árbol binario con valores enteros, devuelve 1 si todos los nodos tiene 
+un valor igual a la suma de los hijos (exceptuando los nodos hoja), 0 en otro caso. */
+
+int btn_compare_sum_childs(btn*root)
+{
+    int result=0;
+    if(root!=NULL)
+    {
+        if(root->left!=NULL && root->right!=NULL)
+        {
+            int sum=btn_sum_elem(root->left)+btn_sum_elem(root->right);
+            if(root->data==sum) result=1;
+        }
+    }
+return result;
+}
+
+/*5. Armar una función que dado un Árbol binario y un valor, devuelva el nodo (si está) y además cada vez que un nodo es 
+solicitado intercambia el lugar con su padre (a menos que sea la raíz). El objetivo de esta técnica es que los nodos 
+que se llaman con más frecuencia se encuentren cada vez más accesibles*/
+
+/*6. Armar una función que dado un árbol binario, cree otro exactamente igual pero en espejo.*/
+
+void add_mirrorer(btn*root1,btn**root2)
+{   
+    if(root1!=NULL)
+    {
+        add_node_bt(root2,root1);
+        add_mirrorer((root1)->left,&(*root2)->right);
+        add_mirrorer((root1)->right,&(*root2)->left);
+    }
+}
+
+/*Armar una función (y las funciones auxiliares necesarias) para que dado un Árbol binario (BT), 
+sustituirlo por un árbol binario de búsqueda (BST) con la misma información.  */
+
+void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+    if(root2!=NULL)
+    {
+        btn* temp=btn_newnode(root2->data);
+        bst_add_node(root1,temp,cmp_btn);
+        bt_to_bst(root1,root2->left,cmp_btn);
+        bt_to_bst(root1,root2->right,cmp_btn);
+    }
+}
 
 /*
 BT* new_node_BT(t_elem_BT value)

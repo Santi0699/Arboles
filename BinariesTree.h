@@ -30,7 +30,16 @@ btn** bst_getmax_node(btn**root);
 btn** bst_searchvalue_interative(btn**root,BTREE_ELEM value);
 btn** bst_searchvalue_recursive(btn**root,BTREE_ELEM value);
 int bst_check_value(btn*root,BTREE_ELEM value);
-
+int maxi (BTREE_ELEM a, BTREE_ELEM b);
+void bst_right_rotation(btn**root);
+void bst_left_rotation(btn**root);
+void bst_remove_node(btn** root, BTREE_ELEM value);
+void change_father_with_son(btn**root, btn*value);
+void bst_remove_node2(btn** root, BTREE_ELEM value,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
+void bst_remove_node3(btn** root, BTREE_ELEM value,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
+int btn_sum_elem(btn*root);
+int btn_compare_sum_childs(btn*root);
+void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
 /*
 BT* new_node_BT(t_elem_BT value);
 t_elem_BT get_value(BT* t);
