@@ -40,6 +40,15 @@ void bst_remove_node3(btn** root, BTREE_ELEM value,int cmp_btn(BTREE_ELEM,BTREE_
 int btn_sum_elem(btn*root);
 int btn_compare_sum_childs(btn*root);
 void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
+void bst_list_delete_same_values(node** h,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
+void bst_to_list(node** h, btn* root);
+void bst_detroy(btn** root);
+
+void toStr(btn* nodo, char* buffer);
+int btn_cmp_int(BTREE_ELEM a, BTREE_ELEM b);
+void btn_intToStr(btn* node, char* str);
+void btn_print(btn *tree, void toStr (btn*, char*));
+int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*));
 /*
 BT* new_node_BT(t_elem_BT value);
 t_elem_BT get_value(BT* t);

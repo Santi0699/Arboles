@@ -1,4 +1,5 @@
 #include "BinariesTree.h"
+#include "Listas.h"
 
 //1.a Crear un nodo de un BT en base a un valor BTREE_ELEM
 btn* btn_newnode(BTREE_ELEM value)
@@ -528,7 +529,7 @@ void add_mirrorer(btn*root1,btn**root2)
     }
 }
 
-/*Armar una función (y las funciones auxiliares necesarias) para que dado un Árbol binario (BT), 
+/*7. Armar una función (y las funciones auxiliares necesarias) para que dado un Árbol binario (BT), 
 sustituirlo por un árbol binario de búsqueda (BST) con la misma información.  */
 
 void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
@@ -542,6 +543,118 @@ void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
     }
 }
 
+/*8. Eliminar todos los elementos repetidos de una lista dinámica simplemente 
+enlazada, recorriendo la lista una sola vez y utilizando como estructura auxiliar un BST. */
+
+void bst_list_delete_same_values(node** h,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+    if((*h)!=NULL)
+    {
+        
+        btn* aux_tree=NULL; 
+        if(bst_check_value(aux_tree,(*h)->data)==0)
+        {   
+            bst_add_node(&aux_tree,node_remove_front(h),cmp_btn);
+        }else
+            {
+                delete_node2(h,(*h)->data);
+            }
+        
+        bst_to_list(h,aux_tree);
+        bst_destroy(&aux_tree);
+        }
+}
+
+void bst_to_list(node** h, btn* root)
+{
+    if(root!=NULL)
+    {
+        bst_to_list(h,root->left);
+        node_add_first2(h,node_new(root->data));
+        bst_to_list(h,root->right);
+    }
+}
+
+void bst_detroy(btn** root)
+{
+    if((*root)!=NULL)
+    {
+        bst_detroy((*root)->left);
+        bst_detroy((*root)->right);
+        free(root);
+    }
+}
+
+
+
+int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*)) {
+    char b[200];
+    int width = 5;
+
+    if (!tree) return 0;
+    toStr(tree, b);
+    //sprintf(b, "%s", str);
+    
+
+    int left = _btn_print(tree->left, 1, offset, depth + 1, s, toStr);
+    int right = _btn_print(tree->right, 0, offset + left + width, depth + 1, s, toStr);
+
+    // for (int i = 0; i < width; i++) s[2 * depth][offset + left + i] = b[i];
+    for (int i = 0; i < strlen(b); i++) s[2 * depth][offset + left + i] = b[i];
+
+    if (depth && is_left) {
+        for (int i = 0; i < width + right; i++)
+            s[2 * depth - 1][offset + left + width / 2 + i] = '-';
+
+        s[2 * depth - 1][offset + left + width / 2] = '+';
+        s[2 * depth - 1][offset + left + width + right + width / 2] = '+';
+
+    } else if (depth && !is_left) {
+        for (int i = 0; i < left + width; i++)
+            s[2 * depth - 1][offset - width / 2 + i] = '-';
+
+        s[2 * depth - 1][offset + left + width / 2] = '+';
+        s[2 * depth - 1][offset - width / 2 - 1] = '+';
+    }
+    
+    return left + width + right;
+}
+
+/**
+ * Dibuja un árbol binario con caracteres
+ * (Los datos de los nodos deben enteros entre 0 y 999).
+ */
+void btn_print(btn *tree, void toStr (btn*, char*)) {
+    char s[20][255];
+    for (int i = 0; i < 20; i++) sprintf(s[i], "%80s", " ");
+
+    _btn_print(tree, 0, 0, 0, s, toStr);
+
+    for (int i = 0; i < 20; i++) {
+        int j = 0;
+        while (s[i][j] != '\0' && s[i][j] == ' ') {
+            j++;
+        }
+        if (s[i][j] != '\0') {
+            printf("%s\n", s[i]);
+        }
+    }
+}
+
+void btn_intToStr(btn* node, char* str) {
+    if (!node) return;    
+    sprintf(str, "(%03d)", node->data);    
+}
+
+// compara 2 elementos del árbol cuando son enteros
+int btn_cmp_int(BTREE_ELEM a, BTREE_ELEM b) {
+    return a - b;
+}
+
+void toStr(btn* nodo, char* buffer)
+{
+    sprintf(buffer, "%3d", nodo->data);  // imprime el dato con ancho fijo
+}
 /*
 BT* new_node_BT(t_elem_BT value)
 {
