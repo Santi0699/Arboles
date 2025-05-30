@@ -1,5 +1,6 @@
 #include "BinariesTree.h"
 #include "Listas.h"
+#include "string.h"
 
 //1.a Crear un nodo de un BT en base a un valor BTREE_ELEM
 btn* btn_newnode(BTREE_ELEM value)
@@ -546,23 +547,14 @@ void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
 /*8. Eliminar todos los elementos repetidos de una lista dinámica simplemente 
 enlazada, recorriendo la lista una sola vez y utilizando como estructura auxiliar un BST. */
 
-void bst_list_delete_same_values(node** h,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+void bst_destroy(btn** root)
 {
-    if((*h)!=NULL)
+    if((*root)!=NULL)
     {
-        
-        btn* aux_tree=NULL; 
-        if(bst_check_value(aux_tree,(*h)->data)==0)
-        {   
-            bst_add_node(&aux_tree,node_remove_front(h),cmp_btn);
-        }else
-            {
-                delete_node2(h,(*h)->data);
-            }
-        
-        bst_to_list(h,aux_tree);
-        bst_destroy(&aux_tree);
-        }
+        bst_destroy(&(*root)->left);
+        bst_destroy(&(*root)->right);
+        free(root);
+    }
 }
 
 void bst_to_list(node** h, btn* root)
@@ -575,15 +567,33 @@ void bst_to_list(node** h, btn* root)
     }
 }
 
-void bst_detroy(btn** root)
+
+void bst_list_delete_same_values(node** h,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
 {
-    if((*root)!=NULL)
+    if((*h)!=NULL)
     {
-        bst_detroy((*root)->left);
-        bst_detroy((*root)->right);
-        free(root);
-    }
+        
+        btn* aux_tree=NULL;
+        while(*h!=NULL)
+        {
+            if(bst_check_value(aux_tree,(*h)->data)==0)
+            {   
+                node* aux=node_remove_front(h);
+                btn* temp=btn_newnode(aux->data);
+                bst_add_node(&aux_tree,temp,cmp_btn);
+            }else
+                {
+                delete_node2(h,(*h)->data);
+                }
+        }
+
+        bst_to_list(h,aux_tree);
+        bst_destroy(&aux_tree);
+        }
 }
+
+
+
 
 
 

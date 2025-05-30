@@ -6,12 +6,7 @@
 #define t_elem_node int
 #define t_elem_node_t node*
 
-typedef struct _node
-{
-    t_elem_node data;
-    struct _node* next;    
-    
-}node;
+typedef struct _node node;
 typedef struct _node_t node_t;
 
 

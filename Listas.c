@@ -428,7 +428,7 @@ void remove_shared_nodes(node** list_a, node** list_b)
 
     while(aux1!=NULL)
     {
-        node* aux2=list_b;
+        node* aux2=*list_b;
         int delete=0;
 
         while (aux2!=NULL && delete==0)
@@ -543,7 +543,7 @@ int has_cycle(node* list)
 {
     if(list==NULL||list->next==NULL)return 0;
 
-    return has_cycle_recursive(list,list->next);
+    return has_cycle_rec(list,list->next);
 }
 
 void add_last(node** head, t_elem_node_t value)

@@ -1,5 +1,6 @@
 #include "BinariesTree.h"
 #include "string.h"
+#include "Listas.h"
 
 
 
@@ -14,6 +15,7 @@ int main()
     bst_add_node(&(nuevo_sbt),btn_newnode(3),cmp_btn);
     bst_add_node(&(nuevo_sbt),btn_newnode(17),cmp_btn);
     */
+   /*
     add_node_bt(&nuevo_sbt,btn_newnode(-10));
     add_node_bt(&nuevo_sbt,btn_newnode(2));
     add_node_bt(&nuevo_sbt,btn_newnode(-30));
@@ -30,6 +32,18 @@ int main()
     btn_print(nuevo_sbt, toStr);
     puts(" ");
     btn_print(sbt_new, toStr);
+    */
+
+    node* head=node_new(5);
+    node_add_first2(&head,node_new(6));
+    node_add_first2(&head,node_new(20));
+    node_add_first2(&head,node_new(12));
+    node_add_first2(&head,node_new(10));
+    node_add_first2(&head,node_new(6));
+    node_add_first2(&head,node_new(12));
+    list_print(head,int_print);
+    bst_list_delete_same_values(&head,cmp_btn);
+    list_print(head,int_print);
     //bst_remove_node(&(nuevo_sbt),25);
     //btn_print(nuevo_sbt, toStr);
 

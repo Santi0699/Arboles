@@ -3,8 +3,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include "Listas.h"
 #define BTREE_ELEM int
+#define t_elem_node int
 typedef struct _btn
 {
     BTREE_ELEM data;
@@ -12,6 +13,12 @@ typedef struct _btn
     struct _btn* right;
 }btn;
 
+typedef struct _node
+{
+    t_elem_node data;
+    struct _node* next;    
+    
+}node;
 btn* btn_newnode(BTREE_ELEM value);
 void btn_deletenode(btn**node);
 btn** btn_search_value(btn** root, BTREE_ELEM value);
@@ -42,7 +49,7 @@ int btn_compare_sum_childs(btn*root);
 void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
 void bst_list_delete_same_values(node** h,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
 void bst_to_list(node** h, btn* root);
-void bst_detroy(btn** root);
+void bst_destroy(btn** root);
 
 void toStr(btn* nodo, char* buffer);
 int btn_cmp_int(BTREE_ELEM a, BTREE_ELEM b);
