@@ -7,14 +7,22 @@
 int main()
 {
 
-    btn* nuevo_sbt=btn_newnode(10);/*
+    btn* nuevo_sbt=btn_newnode(10);
     bst_add_node(&(nuevo_sbt),btn_newnode(20),cmp_btn);
     bst_add_node(&(nuevo_sbt),btn_newnode(15),cmp_btn);
     bst_add_node(&(nuevo_sbt),btn_newnode(25),cmp_btn);
     bst_add_node(&(nuevo_sbt),btn_newnode(4),cmp_btn);
     bst_add_node(&(nuevo_sbt),btn_newnode(3),cmp_btn);
     bst_add_node(&(nuevo_sbt),btn_newnode(17),cmp_btn);
-    */
+    
+    btn* nuevo_sbt2=btn_newnode(12);
+    bst_add_node(&(nuevo_sbt2),btn_newnode(20),cmp_btn);
+    bst_add_node(&(nuevo_sbt2),btn_newnode(15),cmp_btn);
+    bst_add_node(&(nuevo_sbt2),btn_newnode(30),cmp_btn);
+    bst_add_node(&(nuevo_sbt2),btn_newnode(4),cmp_btn);
+    bst_add_node(&(nuevo_sbt2),btn_newnode(8),cmp_btn);
+    bst_add_node(&(nuevo_sbt2),btn_newnode(17),cmp_btn);
+
    /*
     add_node_bt(&nuevo_sbt,btn_newnode(-10));
     add_node_bt(&nuevo_sbt,btn_newnode(2));
@@ -33,7 +41,7 @@ int main()
     puts(" ");
     btn_print(sbt_new, toStr);
     */
-
+    /*
     node* head=node_new(5);
     node_add_first2(&head,node_new(6));
     node_add_first2(&head,node_new(20));
@@ -46,6 +54,10 @@ int main()
     list_print(head,int_print);
     //bst_remove_node(&(nuevo_sbt),25);
     //btn_print(nuevo_sbt, toStr);
+    */
+   btn_print(nuevo_sbt, toStr);
+   btn_print(nuevo_sbt2, toStr);
+    btn* fusion= bst_fusion(&nuevo_sbt,&nuevo_sbt2,cmp_btn);
 
     //int sum=btn_sum_elem(nuevo_sbt);
     //printf("%d",sum);

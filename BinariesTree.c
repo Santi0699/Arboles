@@ -298,30 +298,18 @@ btn** bst_searchvalue_recursive(btn**root,BTREE_ELEM value)
 }
 
 /*f. Hacer una función que devuelva 1 si un valor se encuentra en el BST, o 0 en otro caso.*/
-
-int bst_check_value(btn*root,BTREE_ELEM value)
+int bst_check_value(btn* root, BTREE_ELEM value)
 {
-    if(root==NULL) return -1;
-    if(root->data==value)return 1;
-    
-    int result=0;
-    if(value<root->data)
-    {
-        btn**temp=bst_searchvalue_recursive(&(root)->left,value);
-        if((*temp)->data==value)
-        {
-            result=1;
-        }
-    }else{
-        btn**temp2= bst_searchvalue_recursive(&(root)->right,value);
-        if((*temp2)->data==value)
-        {
-            result=1;
-        }
-        
-    }
+    if (root == NULL)
+        return 0;
 
-    return result;
+    if (root->data == value)
+        return 1;
+
+    if (value < root->data)
+        return bst_check_value(root->left, value);
+    else
+        return bst_check_value(root->right, value);
 }
 
 /*Funciones de rotar nodos*/
@@ -382,7 +370,7 @@ void bst_right_rotation(btn**root)
 
 /*g. Quitar un nodo de un BST, reemplazando el nodo por su rama Derecha y agregando la rama 
 Izquierda a la rama derecha.*/
-void bst_remove_node(btn** root, BTREE_ELEM value)
+btn* bst_remove_node(btn** root, BTREE_ELEM value)
 {
     btn** aux1=bst_searchvalue_recursive(root,value);
 
@@ -404,8 +392,9 @@ void bst_remove_node(btn** root, BTREE_ELEM value)
     }
     aux2->left = NULL;
     aux2->right = NULL;
-
+    return aux2;
 }
+
 
 /*h. Remover un nodo de un BST, sustituyéndolo por el nodo de mayor valor de su subárbol izquierdo 
 o por el de menor valor de su subárbol derecho.*/
@@ -415,37 +404,44 @@ void change_father_with_son(btn**root, btn*value)
 
 }
 
-void bst_remove_node2(btn** root, BTREE_ELEM value,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
-{   if(!root)
-    {
-        btn** delete=bst_searchvalue_recursive(root,value);
-        btn*temp= (*delete);
-        if((*delete)->left!=NULL)
-        {
-            btn** maxL=bst_getmax_node(&(*delete)->left);
-            *delete=*maxL;
-            maxL=NULL;
-            bst_add_node(delete,temp->left,cmp_btn);
-            temp->left=NULL;
-            if(temp->right!=NULL){
-                bst_add_node(delete,temp->right,cmp_btn);
-                temp->right=NULL;
-            }
-        }else
-            {
-               btn** minR=bst_getmin_node(&(*delete)->right);
-                *delete=*minR;
-                minR=NULL;
-                bst_add_node(delete,temp->right,cmp_btn);
-                temp->right=NULL;
-                if(temp->left!=NULL){
-                    bst_add_node(delete,temp->left,cmp_btn);
-                    temp->left=NULL;
-                }
-            }
-    }
+void bst_remove_node2(btn** root, BTREE_ELEM value, int cmp_btn(BTREE_ELEM, BTREE_ELEM)) {
+    if (*root == NULL) return;
 
+    int cmp = cmp_btn(value, (*root)->data);
+    
+    if (cmp < 0) {
+        bst_remove_node2(&((*root)->left), value, cmp_btn);
+    } else if (cmp > 0) {
+        bst_remove_node2(&((*root)->right), value, cmp_btn);
+    } else {
+        btn* temp = *root;
+
+        if (temp->left == NULL && temp->right == NULL) {
+            // Caso 1: sin hijos
+            *root = NULL;
+        } else if (temp->left == NULL) {
+            // Caso 2: solo hijo derecho
+            *root = temp->right;
+        } else if (temp->right == NULL) {
+            // Caso 2: solo hijo izquierdo
+            *root = temp->left;
+        } else {
+            // Caso 3: dos hijos - usar mínimo del subárbol derecho
+            btn** minNode = bst_getmin_node(&temp->right);
+            btn* successor = *minNode;
+            *minNode = successor->right;
+            successor->left = temp->left;
+            successor->right = temp->right;
+            *root = successor;
+        }
+
+        // Opcional: liberar memoria si corresponde
+        temp->left = temp->right = NULL;
+        // free(temp); // si usás malloc
+    }
 }
+
+
 
 /*i.Remover un nodo de un BST, sustituyéndolo el nodo por:
 1.El máximo de su rama izquierda, si la rama izquierda es igual o más alta que la derecha.
@@ -497,6 +493,210 @@ int btn_sum_elem(btn*root)
     return sum;
 }
 
+/*4. Dado un árbol binario con valores enteros, devuelve 1 si todos los nodos tiene 
+un valor igual a la suma de los hijos (exceptuando los nodos hoja), 0 en otro caso. */
+
+int btn_compare_sum_childs(btn*root)
+{
+    int result=0;
+    if(root!=NULL)
+    {
+        if(root->left!=NULL && root->right!=NULL)
+        {
+            int sum=btn_sum_elem(root->left)+btn_sum_elem(root->right);
+            if(root->data==sum) result=1;
+        }
+    }
+return result;
+}
+
+/*5. Armar una función que dado un Árbol binario y un valor, devuelva el nodo (si está) y además cada vez que un nodo es 
+solicitado intercambia el lugar con su padre (a menos que sea la raíz). El objetivo de esta técnica es que los nodos 
+que se llaman con más frecuencia se encuentren cada vez más accesibles*/
+
+/*6. Armar una función que dado un árbol binario, cree otro exactamente igual pero en espejo.*/
+
+void add_mirrorer(btn*root1,btn**root2)
+{   
+    if(root1!=NULL)
+    {
+        add_node_bt(root2,root1);
+        add_mirrorer((root1)->left,&(*root2)->right);
+        add_mirrorer((root1)->right,&(*root2)->left);
+    }
+}
+
+/*7. Armar una función (y las funciones auxiliares necesarias) para que dado un Árbol binario (BT), 
+sustituirlo por un árbol binario de búsqueda (BST) con la misma información.  */
+
+void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+    if(root2!=NULL)
+    {
+        btn* temp=btn_newnode(root2->data);
+        bst_add_node(root1,temp,cmp_btn);
+        bt_to_bst(root1,root2->left,cmp_btn);
+        bt_to_bst(root1,root2->right,cmp_btn);
+    }
+}
+
+/*8. Eliminar todos los elementos repetidos de una lista dinámica simplemente 
+enlazada, recorriendo la lista una sola vez y utilizando como estructura auxiliar un BST. */
+
+void bst_destroy(btn** root)
+{
+    if((*root)!=NULL)
+    {
+        bst_destroy(&(*root)->left);
+        bst_destroy(&(*root)->right);
+        free(root);
+    }
+}
+
+void bst_to_list(node** h, btn* root)
+{
+    if(root!=NULL)
+    {
+        bst_to_list(h,root->left);
+        node_add_first2(h,node_new(root->data));
+        bst_to_list(h,root->right);
+    }
+}
+
+
+void bst_list_delete_same_values(node** h,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+    if((*h)!=NULL)
+    {
+        
+        btn* aux_tree=NULL;
+        while(*h!=NULL)
+        {
+            if(bst_check_value(aux_tree,(*h)->data)==0)
+            {   
+                node* aux=node_remove_front(h);
+                btn* temp=btn_newnode(aux->data);
+                bst_add_node(&aux_tree,temp,cmp_btn);
+            }else
+                {
+                delete_node2(h,(*h)->data);
+                }
+        }
+
+        bst_to_list(h,aux_tree);
+        bst_destroy(&aux_tree);
+        }
+}
+
+/*8.Dados 2 BST, fusionarlos en uno único BST, eliminado los nodos repetidos. */
+
+void bst_to_bst(btn** root1, btn** result,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+    if((*root1)!=NULL)
+    {
+        bst_to_bst(&(*root1)->left,result,cmp_btn);
+        bst_to_bst(&(*root1)->right,result,cmp_btn);
+        bst_add_node(result,bst_remove_node(root1,(*root1)->data),cmp_btn);
+    }
+}
+
+btn* bst_fusion(btn** root1, btn** root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+    btn* result=NULL;
+
+    while((*root1)!=NULL)
+    {
+        bst_to_bst(root1,&result,cmp_btn);
+    }
+    btn_print(result,toStr);
+
+    while (*root2 != NULL)
+    {
+        if(bst_check_value(result,(*root2)->data)<=0)
+        {
+            btn*temp=btn_newnode((*root2)->data);
+            bst_remove_node2(root2,temp->data,cmp_btn);
+            bst_add_node(&result,temp,cmp_btn);
+        }else{
+            bst_remove_node2(root2,(*root2)->data,cmp_btn);
+        }
+    }
+    btn_print(result,toStr);
+    return result;
+}
+
+/*10. Armar 3 funciones para devolver el contenido de un árbol en un vector: en inorder, preorder y post order.*/
+
+
+
+int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*)) {
+    char b[200];
+    int width = 5;
+
+    if (!tree) return 0;
+    toStr(tree, b);
+    //sprintf(b, "%s", str);
+    
+
+    int left = _btn_print(tree->left, 1, offset, depth + 1, s, toStr);
+    int right = _btn_print(tree->right, 0, offset + left + width, depth + 1, s, toStr);
+
+    // for (int i = 0; i < width; i++) s[2 * depth][offset + left + i] = b[i];
+    for (int i = 0; i < strlen(b); i++) s[2 * depth][offset + left + i] = b[i];
+
+    if (depth && is_left) {
+        for (int i = 0; i < width + right; i++)
+            s[2 * depth - 1][offset + left + width / 2 + i] = '-';
+
+        s[2 * depth - 1][offset + left + width / 2] = '+';
+        s[2 * depth - 1][offset + left + width + right + width / 2] = '+';
+
+    } else if (depth && !is_left) {
+        for (int i = 0; i < left + width; i++)
+            s[2 * depth - 1][offset - width / 2 + i] = '-';
+
+        s[2 * depth - 1][offset + left + width / 2] = '+';
+        s[2 * depth - 1][offset - width / 2 - 1] = '+';
+    }
+    
+    return left + width + right;
+}
+
+/**
+ * Dibuja un árbol binario con caracteres
+ * (Los datos de los nodos deben enteros entre 0 y 999).
+ */
+void btn_print(btn *tree, void toStr (btn*, char*)) {
+    char s[20][255];
+    for (int i = 0; i < 20; i++) sprintf(s[i], "%80s", " ");
+
+    _btn_print(tree, 0, 0, 0, s, toStr);
+
+    for (int i = 0; i < 20; i++) {
+        int j = 0;
+        while (s[i][j] != '\0' && s[i][j] == ' ') {
+            j++;
+        }
+        if (s[i][j] != '\0') {
+            printf("%s\n", s[i]);
+        }
+    }
+}
+
+void btn_intToStr(btn* node, char* str) {
+    if (!node) return;    
+    sprintf(str, "(%03d)", node->data);    
+}
+
+// compara 2 elementos del árbol cuando son enteros
+int btn_cmp_int(BTREE_ELEM a, BTREE_ELEM b) {
+    return a - b;
+}
+
+void toStr(btn* nodo, char* buffer)
+{
+    sprintf(buffer, "%3d", nodo->data);  // imprime el dato con ancho fijo
+}
 /*
 BT* new_node_BT(t_elem_BT value)
 {

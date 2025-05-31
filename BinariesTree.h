@@ -40,7 +40,7 @@ int bst_check_value(btn*root,BTREE_ELEM value);
 int maxi (BTREE_ELEM a, BTREE_ELEM b);
 void bst_right_rotation(btn**root);
 void bst_left_rotation(btn**root);
-void bst_remove_node(btn** root, BTREE_ELEM value);
+btn* bst_remove_node(btn** root, BTREE_ELEM value);
 void change_father_with_son(btn**root, btn*value);
 void bst_remove_node2(btn** root, BTREE_ELEM value,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
 void bst_remove_node3(btn** root, BTREE_ELEM value,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
@@ -50,6 +50,8 @@ void bt_to_bst(btn** root1, btn* root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
 void bst_list_delete_same_values(node** h,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
 void bst_to_list(node** h, btn* root);
 void bst_destroy(btn** root);
+btn* bst_fusion(btn** root1, btn** root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
+void bst_to_bst(btn** root1, btn** result,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
 
 void toStr(btn* nodo, char* buffer);
 int btn_cmp_int(BTREE_ELEM a, BTREE_ELEM b);
