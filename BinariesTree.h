@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Listas.h"
+#include "vector.h"
 #define BTREE_ELEM int
 #define t_elem_node int
 typedef struct _btn
@@ -58,6 +59,8 @@ int btn_cmp_int(BTREE_ELEM a, BTREE_ELEM b);
 void btn_intToStr(btn* node, char* str);
 void btn_print(btn *tree, void toStr (btn*, char*));
 int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*));
+void vector_to_bst(vector* v, btn** tree,int cmp_btn(BTREE_ELEM,BTREE_ELEM));
+void bst_vector_order(vector*v);
 /*
 BT* new_node_BT(t_elem_BT value);
 t_elem_BT get_value(BT* t);

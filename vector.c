@@ -117,17 +117,17 @@ void vector_resize(vector** v)
     }
 }
 
-void vector_remove(vector*v, int index)
+t_elem_vector vector_remove(vector*v, int index)
 {
-    if(v==NULL)return ;
-
+    if(v==NULL)return -99999;
+    t_elem_vector result=vector_get(v,index);
     for(int i = index; i < v->size - 1; i++)
     {
         v->a[i] = v->a[i + 1];
     }
 
     v->size--;
-    
+    return result;
 }
 /*
 int vector_insert(vector* v, T_Elem value, int index)
@@ -209,8 +209,8 @@ void vector_add_random2(vector* v)
 
 void vector_insert(vector* v, t_elem_vector value, int index)
 {
-    if (index < 0 || index > v->size) return 0;           // Índice fuera de rango
-    if (v->size >= v->maxsize) return 0;                  // Vector lleno
+    if (index < 0 || index > v->size) return ;           // Índice fuera de rango
+    if (v->size >= v->maxsize) return ;                  // Vector lleno
 
     // Desplazar elementos hacia la derecha
     for (int i = v->size; i > index; i--) {
@@ -239,7 +239,7 @@ void vector_insert_order(vector* v, t_elem_vector value)
     }
 
 }
-
+/*
 vector* vector_combine_order(vector* v1, vector* v2)
 {
     int size1=vector_size(v1);
@@ -260,3 +260,4 @@ vector* vector_combine_order(vector* v1, vector* v2)
     }
     return r;
 }
+*/

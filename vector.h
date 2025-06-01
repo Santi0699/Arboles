@@ -18,7 +18,7 @@ t_elem_vector vector_get(vector* v, int index);
 void vector_set(vector* v, int index, t_elem_vector value);
 void vector_add(vector* v, t_elem_vector value);
 void vector_resize(vector** v);
-void vector_remove(vector*v, int index);
+t_elem_vector vector_remove(vector*v, int index);
 void vector_print2(vector* v);
 void vector_add_random2(vector* v);
 

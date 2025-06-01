@@ -1,6 +1,7 @@
 #include "BinariesTree.h"
 #include "Listas.h"
 #include "string.h"
+#include "vector.h"
 
 //1.a Crear un nodo de un BT en base a un valor BTREE_ELEM
 btn* btn_newnode(BTREE_ELEM value)
@@ -627,7 +628,130 @@ btn* bst_fusion(btn** root1, btn** root2,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
 
 /*10. Armar 3 funciones para devolver el contenido de un árbol en un vector: en inorder, preorder y post order.*/
 
+void bst_to_vector_preorder(btn*root, vector*v)
+{  
+    if(root!=NULL)
+    {
+        vector_add(v,root->data);
+        bst_to_vector_preorder(root->left,v);
+        bst_to_vector_preorder(root->right,v);
+    }
+}
+void bst_to_vector_inorder(btn*root, vector*v)
+{  
+    if(root!=NULL)
+    {
+        bst_to_vector_inorder(root->left,v);
+        vector_add(v,root->data);
+        bst_to_vector_inorder(root->right,v);
+    }
+}
+void bst_to_vector_postorder(btn*root, vector*v)
+{  
+    if(root!=NULL)
+    {
+        bst_to_vector_postorder(root->left,v);
+        bst_to_vector_postorder(root->right,v);
+        vector_add(v,root->data);
+    }
+}
 
+/*11.Ordenar un vector utilizando un BST como estructura auxiliar. 
+Comparar su rendimiento con los algoritmos de ordenamiento de arreglos vistos previamente*/
+
+/*Si quiero ordenar un vector o un array o una queue tengo que recorrer el arbol en postorder*/
+
+void vector_to_bst(vector* v, btn** tree,int cmp_btn(BTREE_ELEM,BTREE_ELEM))
+{
+
+    while(!vector_isempty(v))
+    {
+        t_elem_vector temp=vector_remove(v,0);
+        bst_add_node(tree,btn_newnode(temp),cmp_btn);
+    }
+    
+}
+
+void bst_vector_order(vector*v)
+{
+    btn* tree=NULL;
+    vector_to_bst(v,&tree,cmp_btn);
+    btn_print(tree,toStr);
+    bst_to_vector_inorder(tree,v);
+}
+
+/*12.Armar una función que reconstruya un árbol binario recibiendo como parámetros 2 arreglos con el contenido del 
+árbol en pre-order e in-order. Asumir que no hay elementos repetidos.*/
+
+/*--------------------------------------Arboles n-arios--------------------------------------*/
+
+
+#define NTREE_ELEM int
+
+typedef struct _ntn ntn;
+
+/*Contiene un puntero a nodo de arbol como dato guardado y el puntero a siguiente*/
+typedef struct _ntlist
+{
+    ntn* node;
+    struct _ntlist* next;
+}ntlist;
+
+/*El nodo de arbol contiene la informacion del contenido que puede ser int,char,float,vector,stack,queue,etc
+y un nodo de arbol que seria su hijo*/
+
+typedef struct _ntn
+{
+    NTREE_ELEM data;
+    ntlist* child
+}ntn;
+
+/*Si se quiere tambien se puede implementar con el TDA list en donde */
+
+/*
+typedef struct _ntn
+{
+    NTREE_ELEM value;
+    list* child
+}ntn;
+*/
+
+ntn* ntn_new_node(NTREE_ELEM value)
+{
+    ntn* result=(ntn*)malloc(sizeof(ntn));
+    if(result)
+    {
+        result->data=value;
+        result->child=NULL;
+    }
+    return result;
+}
+
+ntlist* ntl_new(ntn* tree_node)
+{
+    ntlist* new=(ntlist*)malloc(sizeof(ntlist));
+    if(new)
+    {
+        new->node=tree_node;
+        new->next=NULL;
+    }
+    return new;
+}
+
+void ntlist_insert(ntlist** first, ntlist* value)
+{
+    if((*first)==NULL)
+    {
+        *first=value;
+    }else{
+        ntlist_insert(&(*first)->next,value);
+    }
+}
+
+void ntlist_insert_child(ntn* root, ntn* value)
+{  
+    ntlist_insert(&(root->child),ntl_new(value));
+}
 
 int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*)) {
     char b[200];
