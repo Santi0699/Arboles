@@ -869,6 +869,34 @@ int ntn_degree(ntn* root)
 }
 
 
+int ntn_same_degree(ntn* root)
+{
+    if(root==NULL)return 0;
+
+    int result=1;
+    ntlist*l=root->child;
+    int degree=list_lenght(l);
+    while(l!=NULL&&result==1)
+    {
+        ntn* temp=l->node;
+        int degree_temp=list_lenght(temp->child);
+        if(degree_temp!=degree)
+        {
+            result=0;
+        }else if(ntn_degree(temp)==0)
+        {
+            result=0;
+        }
+        l=l->next;
+    }
+    return result;
+}
+
+int ntn_altura(ntn*root, ntn*value)
+{
+    
+}
+
 
 
 int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*)) {
