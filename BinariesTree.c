@@ -2,6 +2,8 @@
 #include "Listas.h"
 #include "string.h"
 #include "vector.h"
+#include "stack_dynamic.h"
+#include "queue_dynamic.h"
 
 //1.a Crear un nodo de un BT en base a un valor BTREE_ELEM
 btn* btn_newnode(BTREE_ELEM value)
@@ -685,25 +687,26 @@ void bst_vector_order(vector*v)
 
 /*--------------------------------------Arboles n-arios--------------------------------------*/
 
-
+/*Los arboles n-arios estan compuestos por 2 tipos de estructuras las cuales son ntn y ntlist*/
 #define NTREE_ELEM int
 
 typedef struct _ntn ntn;
 
-/*Contiene un puntero a nodo de arbol como dato guardado y el puntero a siguiente*/
+/*Contiene un puntero a nodo de arbol(en un nodo de listas normal seria la informacion que estamos manejando) 
+como dato guardado y el puntero a la siguiente direccion de memoria del otro hijo*/
 typedef struct _ntlist
 {
-    ntn* node;
+    ntn* node; // esto en un nodo de listas seria data
     struct _ntlist* next;
 }ntlist;
 
 /*El nodo de arbol contiene la informacion del contenido que puede ser int,char,float,vector,stack,queue,etc
-y un nodo de arbol que seria su hijo*/
+y un puntero a cabecera de lista, que seria la lista de la cantidad de hijos*/
 
 typedef struct _ntn
 {
     NTREE_ELEM data;
-    ntlist* child
+    ntlist* child;
 }ntn;
 
 /*Si se quiere tambien se puede implementar con el TDA list en donde */
@@ -752,6 +755,121 @@ void ntlist_insert_child(ntn* root, ntn* value)
 {  
     ntlist_insert(&(root->child),ntl_new(value));
 }
+
+/*El manejo de las listas es el siguiente (recorrido en profundidad):
+1. Se puede primero hacer la accion o al final de la funcion dependiendo que se pida ya que se puede pedir buscar la
+informacion en una hoja
+2. Siempre se tiene que guardar la lista de hijos en cada momento de la recursividad ya que si no se hace
+se pierden y nunca pasas al resto del arbol
+Imaginar que estas recorriendo listas de listas en caso de no entender el concepto*/
+
+void ntn_print_profundidad_recursivo(ntn* root)
+{
+    if(root!=NULL)
+    {
+        printf("%d",root->data);
+        ntlist* l= root->child;
+        while(l!=NULL)
+        {
+            ntn_print_profundidad(l->node);
+            l=l->next;
+        }
+    }
+}
+
+void ntn_print_profundidad_iterativo(ntn*root)
+{
+    if(root!=NULL)
+    {
+        stack* s=stack_new(90000);
+        
+        push(s,root);
+        while(!stack_isempty(s))
+        {
+            root=pop(s);
+            ntlist* l=root->child;
+            while(l!=NULL)
+            {
+                push(s,l->node);
+                l=l->next;
+            }
+            printf("%d",root->data);
+        }
+            stack_free(s);
+    }
+}
+
+void ntn_print_amplitud(ntn* root)
+{
+    if(root!=NULL)
+    {
+        queue* q=queue_new(90000);
+        enqueue(q,root);
+
+        while(!queue_isempty(q))
+        {
+            root=dequeue(q);
+            ntlist* l= root->child;
+            while(l!=NULL)
+            {
+                enqueue(q,l->node);
+                l=l->next;
+            }
+            printf("%d",root->data);
+        }
+        queue_free(q);
+    }
+}
+
+int ntn_count_nodes(ntn* root)
+{
+    if (root==NULL) return 0;
+    int result=0;
+
+    queue* q=queue_new(90000);
+    enqueue(q,root);
+
+    while(!queue_isempty(q))
+    {
+        root=dequeue(q);
+            result++;
+        ntlist* l= root->child;
+        while(l!=NULL)
+        {
+            enqueue(q,l->node);
+
+            l=l->next;
+        }
+
+        //printf("%d",root->data);
+    }
+    queue_free(q);
+    return result;
+}
+
+int ntn_degree(ntn* root)
+{
+    if(root==NULL)return 0;
+    int degree=list_lenght(root->child);//child es el puntero a cabecera de la lista de hijos
+    
+    ntlist*l=root->child;//nodo auxiliar que apunta a la cabecera de la lista de hijos
+
+
+    while(l!=NULL)
+    {
+        int degree_temp=ntn_degree(l->node);//variable tempora
+        if(degree<degree_temp)
+        {
+            degree=degree_temp;
+        }
+        l=l->next;
+    }
+
+    return degree;
+}
+
+
+
 
 int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*)) {
     char b[200];
