@@ -868,7 +868,6 @@ int ntn_degree(ntn* root)
     return degree;
 }
 
-
 int ntn_same_degree(ntn* root)
 {
     if(root==NULL)return 0;
@@ -892,10 +891,90 @@ int ntn_same_degree(ntn* root)
     return result;
 }
 
-int ntn_altura(ntn*root, ntn*value)
+
+
+int ntn_profundidad(ntn*root, ntn*value)
 {
-    
+    if (root == NULL)
+        return -1;
+
+    if (root->data == value->data)
+        return 0;
+
+    ntlist* l = root->child;
+    int profundidad = -1;
+
+    while (l != NULL && profundidad == -1)
+    {
+        int sub = ntn_profundidad(l->node, value);
+        if (sub != -1)
+            profundidad = sub + 1;
+
+        l = l->next;
+    }
+
+    return profundidad;
 }
+
+int ntn_altura(ntn* root)
+{
+    if(root==NULL)return 0;
+    queue* q=queue_new(9000);
+    enqueue(q,root);
+    int altura=0;
+
+    while(!queue_isempty(q))
+    {
+        int nodes_in_level=queue_getsize(q);
+        for(int i=0; i<nodes_in_level;i++)
+        {
+            ntn* temp=dequeue(q);
+            ntlist* l=root->child;
+
+            while(l!=NULL)
+            {
+                enqueue(q,l->node);
+                l=l->next;
+            }
+        }
+        altura++;
+    }
+
+    return altura;
+}
+
+/*2. Cada nodo del árbol N-ario contendrá un dato genérico. Al implementar las siguientes funciones, se deberán incluir como parámetros funciones específicas para imprimir 
+o comparar estos datos, según sea necesario.*/
+/*a. Devolver el puntero a un nodo particular buscando por los datos. */
+
+int ntn_cmp(NTREE_ELEM a, NTREE_ELEM b)
+{
+    return (a==b)? 1:0;
+}
+
+ntn* ntn_find(ntn*root, ntn*value,int ntn_cmp(NTREE_ELEM,NTREE_ELEM))
+{
+    if(root==NULL)return NULL;
+
+    if(ntn_cmp(root->data,value->data))return root;
+    ntlist* l=root->child;
+    ntn* result=NULL;
+
+    while(l!=NULL && result==NULL)
+    {
+       result=ntn_find(l->node,value,ntn_cmp);
+
+        l=l->next;
+    }
+    return result;
+}
+
+
+/*b. Devolver la profundidad de un nodo, o -1 si no existe. enviar una función de comparación pasada por parámetro.*/
+
+
+
+
 
 
 
