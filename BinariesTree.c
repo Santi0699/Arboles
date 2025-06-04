@@ -929,7 +929,7 @@ int ntn_altura(ntn* root)
         for(int i=0; i<nodes_in_level;i++)
         {
             ntn* temp=dequeue(q);
-            ntlist* l=root->child;
+            ntlist* l=temp->child;
 
             while(l!=NULL)
             {
@@ -1051,7 +1051,116 @@ int ntn_check_trees(ntn* root1, ntn*root2,int cmp_btn(NTREE_ELEM,NTREE_ELEM))
 /*6. Desarrollar una función que dado un árbol N-ario con valores enteros, encuentra cuántos caminos suman 
 exactamente un valor K, desde la raíz a la hoja.*/
 
+int ntn_count_path_equal_K(ntn* root, int count_value_path,int k)
+{
+    if(root==NULL)return 0;
+    
+    count_value_path+=root->data;
 
+    if(root->child==NULL)return (count_value_path==k)? 1:0;
+    int count_path=0;
+    ntlist*l =root->child;
+
+    while(l!=NULL)
+    {
+        count_path+=ntn_count_path_equal_K(l->node,count_value_path,k);
+        l=l->next;
+    }
+    return count_path;
+}
+
+/*7. Desarrollar una función que dado un árbol N-ario y dos valores (A, B), encuentre el camino que conecta ambos nodos (suponiendo que ambos nodos existen)*/
+
+/*8. Desarrollar una función que verifique si un árbol N-ario está “balanceado”. Se considera balanceado si todo los subárboles de un nodo tienen alturas que difiere a lo sumo en 1. */
+
+int ntn_is_balanced(ntn* root)
+{
+    if (root == NULL) return 1;
+
+    int min_h = -1, max_h = -1;
+    ntlist* l = root->child;
+
+    // Calcular alturas de los subárboles hijos
+    while (l != NULL)
+    {
+        int h = ntn_altura(l->node);
+        if (min_h == -1 || h < min_h) min_h = h;
+        if (h > max_h) max_h = h;
+
+        l = l->next;
+    }
+
+    // Si las alturas difieren en más de 1, no está balanceado
+    if (max_h - min_h > 1)
+        return 0;
+
+    // Verificamos que todos los hijos estén balanceados
+    int hijos_balanceados = 1; 
+    l = root->child;
+    while (l != NULL)
+    {
+        if (!ntn_is_balanced(l->node))
+            hijos_balanceados = 0;
+
+        l = l->next;
+    }
+
+    if (hijos_balanceados == 0)
+        return 0;
+
+    return 1;
+}
+
+/*9. Desarrollar una función que determine si un árbol N-ario es simétrico (Un árbol es  simétrico si el orden de los hijos es espejo entre la izquierda y la derecha.*/
+/*
+typedef struct ntlist {
+    struct ntn* node;
+    struct ntlist* next;
+    struct ntlist* prev;
+} ntlist;
+
+typedef struct ntn {
+    int data;
+    struct ntlist* first_child;
+    struct ntlist* last_child; // para acceso directo al final
+} ntn;
+
+int ntn_are_mirror(ntn* node1, ntn* node2)
+{
+    if (node1 == NULL && node2 == NULL) return 1;
+    if (node1 == NULL || node2 == NULL) return 0;
+    if (node1->data != node2->data) return 0;
+
+    ntlist* left = node1->firstchild;
+    ntlist* right = node2->lastchild;
+    int result = 1;
+
+    while (left != NULL && right != NULL && result == 1)
+    {
+        if (!ntn_are_mirror(left->node, right->node))
+        {
+            result = 0;
+        }
+        left = left->next;
+        right = right->prev;
+    }
+
+    // Verifica que ambos hayan llegado al final al mismo tiempo
+    if (left != NULL || right != NULL)
+        result = 0;
+
+    return result;
+}
+
+
+
+int ntn_is_symmetric(ntn*root)
+{
+    if(root==NULL)return 0;
+    return ntn_are_mirror(root,root);
+}
+
+*/
 
 int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*)) {
     char b[200];
