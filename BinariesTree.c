@@ -974,7 +974,82 @@ ntn* ntn_find(ntn*root, ntn*value,int ntn_cmp(NTREE_ELEM,NTREE_ELEM))
 
 
 
+/*c. Escribir el camino desde un nodo a la raíz. Utilizar funciones de comparación e impresión pasadas por parámetro. */
+void ntn_print_path(ntn* root, ntn* target, int ntn_cmp(NTREE_ELEM,NTREE_ELEM),int* found)
+{
+    if(root==NULL)return;
+    if(ntn_cmp(root->data,target->data)==1)
+    {
+        printf("%d",root->data);
+        *found=1;
+        return;
+    }
+    
+    ntlist*l=root->child;
+    while(l!=NULL&&!(*found))
+    {
+        ntn_print_path(l->node,target,ntn_cmp,found);
+        if(*found)
+        {
+            printf("<-%d",root->data);
+        }
+        
+        l=l->next;
+        
+    }
 
+}
+
+
+/*3. Crear un árbol que represente la estructura jerárquica de una empresa (Cargo, nombre)*/
+
+/*5. Desarrollar una función que verifique si dos árboles N-arios son estructuralmente idénticos y 
+tiene los mismos valores en cada nodo.*/
+
+
+int ntn_check_trees(ntn* root1, ntn*root2,int cmp_btn(NTREE_ELEM,NTREE_ELEM))
+{
+    if(root1==NULL&&root2==NULL)return 1;
+    if(root1==NULL||root2==NULL)return 0;
+    queue* q1=queue_new(9);
+    queue* q2=queue_new(9);
+    int result=1;
+    enqueue(q1,root1);
+    enqueue(q2,root2);
+    while((!queue_isempty(q1)||!queue_isempty(q2))&&result==1)
+    {
+        root1=dequeue(q1);
+        root2=dequeue(q2);
+        if(cmp_btn(root1->data,root2->data)==0)
+        {
+            ntlist*l1=root1->child;
+            ntlist*l2=root2->child;
+            if(list_lenght(l1)!=list_lenght(l2))
+            {
+                result=0;
+            }else
+                {
+                    while(l1!=NULL)
+                    {
+                        enqueue(q1,l1->node);
+                        enqueue(q2,l2->node);
+                        l1=l1->next;
+                        l2=l2->next;
+                    }
+                }
+        }else
+            {
+                result=0;
+            }
+
+    }
+    queue_free(q1);
+    queue_free(q2);
+    return result;
+}
+
+/*6. Desarrollar una función que dado un árbol N-ario con valores enteros, encuentra cuántos caminos suman 
+exactamente un valor K, desde la raíz a la hoja.*/
 
 
 
