@@ -1162,6 +1162,41 @@ int ntn_is_symmetric(ntn*root)
 
 */
 
+/*10. Tomando la implementación de árbol N-ario elegida, convertir el mismo árbol utilizando nodos de árbol binario y resolver con la implementación binaria:
+Calcular el grado del árbol.
+Calcular la profundidad de un nodo. 
+Calcular la altura de un nodo. 
+*/
+
+void ntn_to_btn(ntn*root1,btn**root2)
+{
+    if(root1==NULL)return;
+    if(*root2==NULL)
+    {
+        *root2=btn_newnode(root1->data);
+    }
+
+    if(root1->child!=NULL)
+    {
+        btn* left=NULL;
+        ntn_to_btn(root1->child->node,&left);
+        (*root2)->left=left;
+        ntlist* hermanos=root1->child->next;
+        btn* actual=left;
+
+        while(hermanos!=NULL)
+        {
+            btn* new=NULL;
+            ntn_to_btn(hermanos->node,&new);
+            actual->right=new;
+            actual=actual->right;
+            hermanos=hermanos->next;
+        }
+    }
+}
+
+
+
 int _btn_print(btn *tree, int is_left, int offset, int depth, char s[20][255], void toStr (btn*, char*)) {
     char b[200];
     int width = 5;
